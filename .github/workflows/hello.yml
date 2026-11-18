@@ -14,5 +14,5 @@ jobs:
         run: echo 'Hola desde GitHub Actions'
       - name: Mostrar fecha
         run: date
-      - name: Fallo controlado
-        run: exit 1
+      - name: Usuario actual
+        run: whoami
