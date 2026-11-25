@@ -11,6 +11,38 @@ permissions:
   contents: read
 
 jobs:
+  e2e:
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Construir y arrancar el sistema
+        run: docker compose up -d --build
+        env:
+          GIT_SHA: ${{ github.sha }}
+      - name: Esperar a la version
+        run: node scripts/wait-for-version.js <http://localhost:3000> <${{ github.sha }}> <90 seconds>
+      - name: Ejecutar tests e2e
+        run: npm run test:e2e
+        env:
+          BASE_URL: http://localhost:3000
+          GIT_SHA: ${{ github.sha }}
+      - name: Mostrar logs solo si algo falla
+        if: failure()
+        run: docker compose logs
+      - name: Apagar y borrar todo siempre
+        if: always()
+        run: docker compose down -v
+        
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -38,11 +70,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - uses: actions/upload-artifact@v4
         with:
           node-version-file: .nvmrc
           cache: npm
+      - run: npm ci
+      - uses: actions/upload-artifact@v4
+        with:
           name: coverage-report
           path: coverage/
-          if: always()
-      - run: npm ci
+          if-no-files-found: warn
+        if: always()
+      
