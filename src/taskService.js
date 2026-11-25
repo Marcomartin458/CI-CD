@@ -1,11 +1,9 @@
 function validateTitle(title) {
-  console.log('------------')
+  console.log('------------');
   console.log(typeof title);
   console.log(title.trim());
-  
 
   if (typeof title !== 'string' || !title.trim()) {
-    
     console.log('Devuelve error');
     const error = new Error('title debe ser texto no vacío');
     error.status = 400;
@@ -15,8 +13,6 @@ function validateTitle(title) {
   console.log('------------');
 
   return title.trim();
-  
-  
 }
 function createService(repository) {
   return {
