@@ -45,5 +45,4 @@ jobs:
           name: coverage-report
           path: coverage/
           if: always()
-      - run: npm ci       
-        
+      - run: npm ci
