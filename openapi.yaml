@@ -33,7 +33,7 @@ paths:
       responses:
         '200': { description: Lista de tareas }
     post:
-      operationId: createTask
+      # operationId: createTask
       summary: Crea una tarea
       requestBody:
         required: true
